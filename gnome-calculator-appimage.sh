@@ -28,7 +28,8 @@ GSK_RENDERER=cairo ./quick-sharun /usr/bin/gnome-calculator /usr/bin/gcalccmd /u
 cp -vr /usr/share/vala ./AppDir/share/
 cp -vr /usr/share/devhelp ./AppDir/share/
 
-## Copy help files for Help section to work
+## Copy help files
+## FIXES Help section not working
 langs=$(find /usr/share/help/*/gnome-calculator/ -type f | awk -F'/' '{print $5}' | sort | uniq)
 for lang in $langs; do
   mkdir -p ./AppDir/share/help/$lang/gnome-calculator/
@@ -36,12 +37,14 @@ for lang in $langs; do
 done
 
 ## Copy the icon to AppDir's share, as it's not copied by default
+## FIXES icon not being shown in "About" page
 mkdir -p           ./AppDir/share/icons/hicolor/scalable/apps/
 cp -v "$ICON"      ./AppDir/"${ICON#/usr/}"
 
-# Patch StartupWMClass to work on X11
-# Doesn't work when ran in Wayland, as it's 'org.gnome.Calculator' instead.
-# It needs to be manually changed by the user in this case.
+## Patch StartupWMClass to work on X11
+## Doesn't work when ran in Wayland, as it's 'org.gnome.Calculator' instead.
+## It needs to be manually changed by the user in this case.
+## FIXES application icon not being shown in dash (Gnome) & fixes app pinning functionality.
 sed -i '/^\[Desktop Entry\]/a\
 StartupWMClass=gnome-calculator
 ' ./AppDir/*.desktop
@@ -49,7 +52,15 @@ StartupWMClass=gnome-calculator
 ## Further debloat locale
 find ./AppDir/share/locale -type f ! -name '*glib*' ! -name '*gnome-calculator*' -delete
 
-## Force use of cairo backend
+## Copy SSL/TLS certificates & modify pkcs11 lib to not use hardcoded location
+## FIXES currency conversion working only in Arch-based distros
+cp -vr /etc/certificates/ ./AppDir/etc/
+cp -vr /usr/share/certificates/ ./AppDir/share/
+sed -i -e 's|/usr|././|g' "$APPDIR"/shared/lib/pkcs11/*
+sed -i -e 's|/etc|././/etc|g' "$APPDIR"/shared/bin/pkcs11/*
+
+## Force use of cairo GSK backend
+## FIXES app having glitches or not working in some GPU configurations, which is an upstream issue, but calculator doesn't really need GPU acceleration, so we're forcing CPU acceleration for more consistency
 echo "GSK_RENDERER=cairo" >> ./AppDir/.env
 
 ## Copy files needed for search integration
