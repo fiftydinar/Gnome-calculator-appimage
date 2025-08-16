@@ -56,8 +56,8 @@ find ./AppDir/share/locale -type f ! -name '*glib*' ! -name '*gnome-calculator*'
 ## FIXES currency conversion working only in Arch-based distros
 cp -vr /etc/ca-certificates/ ./AppDir/etc/
 cp -vr /usr/share/ca-certificates/ ./AppDir/share/
-sed -i -e 's|/usr|././|g' "$APPDIR"/shared/lib/pkcs11/*
-sed -i -e 's|/etc|././/etc|g' "$APPDIR"/shared/bin/pkcs11/*
+sed -i -e 's|/usr|././|g' ./AppDir/shared/lib/pkcs11/*
+sed -i -e 's|/etc|././/etc|g' ./AppDir/shared/lib/pkcs11/*
 
 ## Force use of cairo GSK backend
 ## FIXES app having glitches or not working in some GPU configurations, which is an upstream issue, but calculator doesn't really need GPU acceleration, so we're forcing CPU acceleration for more consistency
