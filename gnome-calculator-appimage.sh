@@ -54,8 +54,8 @@ find ./AppDir/share/locale -type f ! -name '*glib*' ! -name '*gnome-calculator*'
 
 ## Copy SSL/TLS certificates & modify pkcs11 lib to not use hardcoded location
 ## FIXES currency conversion working only in Arch-based distros
-cp -vr /etc/certificates/ ./AppDir/etc/
-cp -vr /usr/share/certificates/ ./AppDir/share/
+cp -vr /etc/ca-certificates/ ./AppDir/etc/
+cp -vr /usr/share/ca-certificates/ ./AppDir/share/
 sed -i -e 's|/usr|././|g' "$APPDIR"/shared/lib/pkcs11/*
 sed -i -e 's|/etc|././/etc|g' "$APPDIR"/shared/bin/pkcs11/*
 
